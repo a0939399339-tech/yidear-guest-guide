@@ -73,6 +73,23 @@ function go(view,push=true){
 }
 window.addEventListener('popstate',e=>go((e.state&&e.state.view)||location.hash.slice(1)||'home',false));
 
+function injectOfficialPhotos(){
+ const roomTitle=document.querySelector('#view-room .title-block');
+ if(roomTitle && !document.querySelector('#view-room .room-overview')){
+  roomTitle.insertAdjacentHTML('afterend',`<figure class="site-photo room-overview"><img loading="lazy" decoding="async" alt="YIDEAR HOTEL room amenities" src="https://www.yidear-hotel.com/wp-content/uploads/2018/12/%E6%83%85%E5%A2%83%E7%85%A7%E7%89%87_181230_0006.jpg"></figure>`);
+ }
+
+ const equipmentTitle=document.querySelector('#view-equipment .title-block');
+ if(equipmentTitle && !document.querySelector('#view-equipment .equipment-photo')){
+  equipmentTitle.insertAdjacentHTML('afterend',`<figure class="site-photo equipment-photo"><img loading="lazy" decoding="async" alt="YIDEAR HOTEL guest room bathroom" src="https://www.yidear-hotel.com/wp-content/uploads/2018/08/DSC_5864-2.jpg"></figure>`);
+ }
+
+ const diningCard=document.querySelector('#view-dining .stack .card');
+ if(diningCard && !diningCard.querySelector('.dining-photo')){
+  diningCard.insertAdjacentHTML('afterbegin',`<div class="dining-photo"><img loading="lazy" decoding="async" alt="YIDEAR HOTEL breakfast presentation" src="https://www.yidear-hotel.com/wp-content/uploads/2022/11/%E6%97%A9%E9%A4%901.jpg"></div>`);
+ }
+}
+
 function boot(){
  document.getElementById('langSelect').addEventListener('change',e=>{
   lang=e.target.value;
@@ -102,6 +119,7 @@ async function loadPartials(){
  const files=['partials/home-stay.html','partials/room-tv.html','partials/policies-dining.html','partials/services-details.html'];
  const html=await Promise.all(files.map(f=>fetch(f).then(r=>{if(!r.ok) throw new Error(f); return r.text()})));
  document.getElementById('app').innerHTML=html.join('');
+ injectOfficialPhotos();
  boot();
 }
 loadPartials().catch(()=>{document.getElementById('app').innerHTML='<div style="padding:24px">Unable to load guest guide.</div>';});
