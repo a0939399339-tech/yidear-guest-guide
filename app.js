@@ -1,5 +1,6 @@
 let lang='zh';
 let current='home';
+let giftTimer=null;
 
 function detectLang(){
  let saved=null;
@@ -12,6 +13,12 @@ function detectLang(){
  return 'zh';
 }
 function tr(key){return T[lang][key] ?? T.zh[key] ?? key}
+function campaignText(key){
+ const c=window.GIFT_CAMPAIGN||{};
+ const v=c[key];
+ if(v && typeof v==='object') return v[lang] || v.zh || v.en || '';
+ return v || '';
+}
 function applyLang(){
  document.documentElement.lang = lang==='zh'?'zh-Hant':lang;
  document.querySelectorAll('[data-i18n]').forEach(el=>{
@@ -28,6 +35,7 @@ function applyLang(){
  document.getElementById('tvSteps').innerHTML=tr('tvSteps').map((x,i)=>`<div class="step"><b>${String(i+1).padStart(2,'0')}</b><span>${esc(x)}</span></div>`).join('');
  renderItems();
  renderChannels();
+ syncGiftModal();
 }
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function renderItems(){
@@ -47,9 +55,79 @@ function renderChannels(){
  const rows=CHANNELS.filter(c=>(c.num+' '+c.name).toLowerCase().includes(q)).map(c=>`<tr><td><strong>${esc(c.num)}</strong></td><td>${esc(c.name)}</td></tr>`).join('');
  document.getElementById('channelRows').innerHTML=rows;
 }
+
+function giftSeenKey(){
+ const c=window.GIFT_CAMPAIGN||{};
+ return `yidear_gift_seen_${c.id||'current'}`;
+}
+function giftSeen(){
+ try{return sessionStorage.getItem(giftSeenKey())==='1'}catch(e){return false}
+}
+function markGiftSeen(){
+ try{sessionStorage.setItem(giftSeenKey(),'1')}catch(e){}
+}
+function ensureGiftModal(){
+ if(document.getElementById('giftModal')) return;
+ const modal=document.createElement('div');
+ modal.id='giftModal';
+ modal.className='gift-modal';
+ modal.hidden=true;
+ modal.setAttribute('role','dialog');
+ modal.setAttribute('aria-modal','true');
+ modal.setAttribute('aria-labelledby','giftModalTitle');
+ modal.innerHTML=`<div class="gift-dialog"><button class="gift-close" type="button" aria-label="Close" onclick="closeGiftModal()">×</button><a class="gift-image-link" id="giftModalImageLink" target="_blank" rel="noopener"><img class="gift-image" id="giftModalImage" alt="YIDEAR HOTEL guest gift DM"></a><div class="gift-copy"><h2 id="giftModalTitle"></h2><p id="giftModalNote"></p><a class="gift-cta" id="giftModalCta" target="_blank" rel="noopener"></a></div></div>`;
+ document.body.appendChild(modal);
+ modal.addEventListener('click',e=>{if(e.target===modal) closeGiftModal();});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape') closeGiftModal();});
+ syncGiftModal();
+}
+function syncGiftModal(){
+ const modal=document.getElementById('giftModal');
+ const c=window.GIFT_CAMPAIGN||{};
+ if(!modal || !c) return;
+ const image=document.getElementById('giftModalImage');
+ const imageLink=document.getElementById('giftModalImageLink');
+ const cta=document.getElementById('giftModalCta');
+ document.getElementById('giftModalTitle').textContent=campaignText('title');
+ document.getElementById('giftModalNote').textContent=campaignText('note');
+ cta.textContent=campaignText('cta');
+ image.src=c.image||'';
+ imageLink.href=c.link||'#';
+ cta.href=c.link||'#';
+}
+function openGiftModal(markSeenNow=true){
+ const c=window.GIFT_CAMPAIGN||{};
+ if(!c.enabled) return;
+ if(giftTimer){clearTimeout(giftTimer);giftTimer=null;}
+ ensureGiftModal();
+ syncGiftModal();
+ if(markSeenNow) markGiftSeen();
+ const modal=document.getElementById('giftModal');
+ modal.hidden=false;
+ document.body.classList.add('gift-modal-open');
+ requestAnimationFrame(()=>modal.classList.add('open'));
+}
+function closeGiftModal(){
+ const modal=document.getElementById('giftModal');
+ if(!modal || modal.hidden) return;
+ modal.classList.remove('open');
+ document.body.classList.remove('gift-modal-open');
+ setTimeout(()=>{modal.hidden=true;},340);
+}
+function scheduleGiftModal(){
+ const c=window.GIFT_CAMPAIGN||{};
+ if(giftTimer){clearTimeout(giftTimer);giftTimer=null;}
+ if(current!=='home' || !c.enabled || c.autoOpen===false || giftSeen()) return;
+ giftTimer=setTimeout(()=>{
+   giftTimer=null;
+   if(current==='home' && !giftSeen()) openGiftModal(true);
+ },Number(c.autoOpenDelay)||1400);
+}
+
 function go(view,push=true){
  if(!document.getElementById('view-'+view)) view='home';
  const nextEl=document.getElementById('view-'+view);
+ if(view!=='home') closeGiftModal();
 
  document.querySelectorAll('.view').forEach(v=>{
    v.classList.remove('active','view-enter','view-leave');
@@ -70,6 +148,7 @@ function go(view,push=true){
  document.getElementById('bottomNav').style.display=view==='home'?'none':'flex';
  window.scrollTo({top:0,behavior:'auto'});
  if(push) history.pushState({view},'',view==='home'?'#home':'#'+view);
+ if(view==='home') scheduleGiftModal();
 }
 window.addEventListener('popstate',e=>go((e.state&&e.state.view)||location.hash.slice(1)||'home',false));
 
