@@ -69,14 +69,37 @@
   height:20px !important;
   flex:0 0 1px !important;
   margin:0 !important;
-  background:linear-gradient(
-    180deg,
-    transparent,
-    rgba(143,107,46,.34) 25%,
-    rgba(143,107,46,.34) 75%,
-    transparent
-  ) !important;
+  background:linear-gradient(180deg,transparent,rgba(143,107,46,.34) 25%,rgba(143,107,46,.34) 75%,transparent) !important;
 }
+
+/* V4.8.1 — official hotel photography */
+.site-photo{
+  margin:0 0 16px;
+  height:220px;
+  border-radius:24px;
+  overflow:hidden;
+  background:#eee7dc;
+  border:1px solid var(--line);
+  box-shadow:var(--shadow2);
+}
+.site-photo img,
+.dining-photo img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.room-overview img{object-position:center 48%}
+.equipment-photo{height:245px}
+.equipment-photo img{object-position:center 50%}
+.dining-photo{
+  height:220px;
+  overflow:hidden;
+  background:#eee7dc;
+  border-bottom:1px solid var(--line);
+}
+.dining-photo img{object-position:center 53%}
+
 @media(max-width:620px){
   .iconbox.iconpair{
     width:78px !important;
@@ -88,4 +111,7 @@
     height:21px !important;
     flex-basis:21px !important;
   }
+  .site-photo{height:185px;border-radius:20px}
+  .equipment-photo{height:205px}
+  .dining-photo{height:185px}
 }
