@@ -1,0 +1,69 @@
+/* V4.8 — official YIDEAR photography, kept restrained for a cleaner hotel feel */
+.hero{
+  background:
+    linear-gradient(90deg,rgba(14,13,12,.95) 0%,rgba(18,15,11,.88) 44%,rgba(21,17,12,.61) 72%,rgba(18,14,10,.48) 100%),
+    linear-gradient(180deg,rgba(0,0,0,.04),rgba(0,0,0,.17)),
+    url("https://www.yidear-hotel.com/wp-content/uploads/2018/08/DSC_5853-1.jpg") center 48%/cover no-repeat !important;
+}
+.hero::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,.018),rgba(0,0,0,.08));
+}
+.hero > *{position:relative;z-index:1}
+
+.site-photo{
+  margin:0 0 16px;
+  height:220px;
+  border-radius:24px;
+  overflow:hidden;
+  background:#eee7dc;
+  border:1px solid var(--line);
+  box-shadow:var(--shadow2);
+}
+.site-photo img,
+.dining-photo img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.room-overview img{object-position:center 56%}
+.equipment-photo{height:245px}
+.equipment-photo img{object-position:center 52%}
+
+.dining-photo{
+  height:220px;
+  overflow:hidden;
+  background:#eee7dc;
+  border-bottom:1px solid var(--line);
+}
+.dining-photo img{object-position:center 53%}
+
+/* Keep photo transitions light: opacity + transform only. */
+.view-enter .site-photo,
+.view-enter .dining-photo{
+  animation:photoEnter .72s var(--ease-soft) both;
+}
+@keyframes photoEnter{
+  from{opacity:0;transform:translate3d(0,8px,0)}
+  to{opacity:1;transform:translate3d(0,0,0)}
+}
+
+@media(max-width:620px){
+  .hero{
+    background:
+      linear-gradient(90deg,rgba(14,13,12,.96) 0%,rgba(18,15,11,.89) 55%,rgba(20,16,11,.62) 100%),
+      url("https://www.yidear-hotel.com/wp-content/uploads/2018/08/DSC_5853-1.jpg") 58% center/cover no-repeat !important;
+  }
+  .site-photo{height:180px;border-radius:20px}
+  .equipment-photo{height:200px}
+  .dining-photo{height:185px}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .view-enter .site-photo,
+  .view-enter .dining-photo{animation:none !important}
+}
