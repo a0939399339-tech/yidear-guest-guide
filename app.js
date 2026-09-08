@@ -76,12 +76,12 @@ window.addEventListener('popstate',e=>go((e.state&&e.state.view)||location.hash.
 function injectOfficialPhotos(){
  const roomTitle=document.querySelector('#view-room .title-block');
  if(roomTitle && !document.querySelector('#view-room .room-overview')){
-  roomTitle.insertAdjacentHTML('afterend',`<figure class="site-photo room-overview"><img loading="lazy" decoding="async" alt="YIDEAR HOTEL room amenities" src="https://www.yidear-hotel.com/wp-content/uploads/2018/12/%E6%83%85%E5%A2%83%E7%85%A7%E7%89%87_181230_0006.jpg"></figure>`);
+  roomTitle.insertAdjacentHTML('afterend',`<figure class="site-photo room-overview"><img loading="lazy" decoding="async" alt="YIDEAR HOTEL guest room" src="https://www.yidear-hotel.com/wp-content/uploads/2018/08/DSC_5834-1.jpg"></figure>`);
  }
 
  const equipmentTitle=document.querySelector('#view-equipment .title-block');
  if(equipmentTitle && !document.querySelector('#view-equipment .equipment-photo')){
-  equipmentTitle.insertAdjacentHTML('afterend',`<figure class="site-photo equipment-photo"><img loading="lazy" decoding="async" alt="YIDEAR HOTEL guest room bathroom" src="https://www.yidear-hotel.com/wp-content/uploads/2018/08/DSC_5864-2.jpg"></figure>`);
+  equipmentTitle.insertAdjacentHTML('afterend',`<figure class="site-photo equipment-photo"><img loading="lazy" decoding="async" alt="YIDEAR HOTEL guest room equipment" src="https://www.yidear-hotel.com/wp-content/uploads/2018/08/DSC_5850-1.jpg"></figure>`);
  }
 
  const diningCard=document.querySelector('#view-dining .stack .card');
