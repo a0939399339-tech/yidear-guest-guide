@@ -1,0 +1,59 @@
+/* V4.7 Smooth — GPU-friendly motion */
+.view,
+.home-card,
+.menu-card,
+.iconbox,
+.mini-icon,
+.arrow{
+  transform:translateZ(0);
+  -webkit-font-smoothing:antialiased;
+}
+.view.view-enter{
+  will-change:opacity,transform;
+}
+.home-card,
+.menu-card{
+  will-change:transform;
+}
+body.page-transition{
+  overflow-x:hidden;
+}
+
+body.page-transition .home-card,
+body.page-transition .menu-card,
+body.page-transition .iconbox,
+body.page-transition .mini-icon{
+  box-shadow:none !important;
+}
+body.page-transition .home-card::after,
+body.page-transition .menu-card::after{
+  animation:none !important;
+  opacity:0 !important;
+}
+
+@media(max-width:620px){
+  .topbar{
+    backdrop-filter:none;
+    -webkit-backdrop-filter:none;
+    background:rgba(15,14,13,.96);
+  }
+  .page-veil{
+    background:linear-gradient(180deg,rgba(248,245,238,.34),rgba(245,240,231,.18));
+  }
+  .home-card,
+  .menu-card{
+    will-change:auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .view.view-enter,
+  .view-enter .menu-card,
+  .view-enter .home-card,
+  .view-enter .card,
+  .view-enter .media,
+  .view.view-enter .title-block,
+  body.page-transition .page-veil{
+    animation:none !important;
+  }
+}
