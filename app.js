@@ -75,7 +75,7 @@ function ensureGiftModal(){
  modal.setAttribute('role','dialog');
  modal.setAttribute('aria-modal','true');
  modal.setAttribute('aria-labelledby','giftModalTitle');
- modal.innerHTML=`<div class="gift-dialog"><button class="gift-close" type="button" aria-label="Close" onclick="closeGiftModal()">×</button><a class="gift-image-link" id="giftModalImageLink" target="_blank" rel="noopener"><img class="gift-image" id="giftModalImage" alt="YIDEAR HOTEL guest gift DM"></a><div class="gift-copy"><h2 id="giftModalTitle"></h2><p id="giftModalNote"></p><a class="gift-cta" id="giftModalCta" target="_blank" rel="noopener"></a></div></div>`;
+ modal.innerHTML=`<div class="gift-dialog"><button class="gift-close" type="button" aria-label="Close" onclick="closeGiftModal()">×</button><a class="gift-image-link" id="giftModalImageLink" target="_blank" rel="noopener"><img class="gift-image" id="giftModalImage" alt=""></a><div class="gift-copy"><h2 id="giftModalTitle"></h2><p id="giftModalNote"></p><a class="gift-cta" id="giftModalCta" target="_blank" rel="noopener"></a></div></div>`;
  document.body.appendChild(modal);
  modal.addEventListener('click',e=>{if(e.target===modal) closeGiftModal();});
  document.addEventListener('keydown',e=>{if(e.key==='Escape') closeGiftModal();});
@@ -112,7 +112,7 @@ function closeGiftModal(){
  if(!modal || modal.hidden) return;
  modal.classList.remove('open');
  document.body.classList.remove('gift-modal-open');
- setTimeout(()=>{modal.hidden=true;},340);
+ setTimeout(()=>{modal.hidden=true;},300);
 }
 function scheduleGiftModal(){
  const c=window.GIFT_CAMPAIGN||{};
@@ -128,23 +128,16 @@ function go(view,push=true){
  if(!document.getElementById('view-'+view)) view='home';
  const nextEl=document.getElementById('view-'+view);
  if(view!=='home') closeGiftModal();
-
- document.querySelectorAll('.view').forEach(v=>{
-   v.classList.remove('active','view-enter','view-leave');
- });
-
+ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active','view-enter','view-leave'));
  current=view;
  document.body.classList.remove('page-transition');
  void document.body.offsetWidth;
  document.body.classList.add('page-transition');
-
  nextEl.classList.add('active');
  void nextEl.offsetWidth;
  nextEl.classList.add('view-enter');
-
  setTimeout(()=>{nextEl.classList.remove('view-enter');},980);
  setTimeout(()=>{document.body.classList.remove('page-transition');},1800);
-
  document.getElementById('bottomNav').style.display=view==='home'?'none':'flex';
  window.scrollTo({top:0,behavior:'auto'});
  if(push) history.pushState({view},'',view==='home'?'#home':'#'+view);
@@ -154,19 +147,11 @@ window.addEventListener('popstate',e=>go((e.state&&e.state.view)||location.hash.
 
 function injectOfficialPhotos(){
  const roomTitle=document.querySelector('#view-room .title-block');
- if(roomTitle && !document.querySelector('#view-room .room-overview')){
-  roomTitle.insertAdjacentHTML('afterend',`<figure class="site-photo room-overview"><img loading="lazy" decoding="async" alt="YIDEAR HOTEL guest room" src="https://www.yidear-hotel.com/wp-content/uploads/2018/08/DSC_5834-1.jpg"></figure>`);
- }
-
+ if(roomTitle && !document.querySelector('#view-room .room-overview')) roomTitle.insertAdjacentHTML('afterend',`<figure class="site-photo room-overview"><img loading="lazy" decoding="async" alt="YIDEAR HOTEL guest room" src="https://www.yidear-hotel.com/wp-content/uploads/2018/08/DSC_5834-1.jpg"></figure>`);
  const equipmentTitle=document.querySelector('#view-equipment .title-block');
- if(equipmentTitle && !document.querySelector('#view-equipment .equipment-photo')){
-  equipmentTitle.insertAdjacentHTML('afterend',`<figure class="site-photo equipment-photo"><img loading="lazy" decoding="async" alt="YIDEAR HOTEL guest room equipment" src="https://www.yidear-hotel.com/wp-content/uploads/2018/08/DSC_5850-1.jpg"></figure>`);
- }
-
+ if(equipmentTitle && !document.querySelector('#view-equipment .equipment-photo')) equipmentTitle.insertAdjacentHTML('afterend',`<figure class="site-photo equipment-photo"><img loading="lazy" decoding="async" alt="YIDEAR HOTEL guest room equipment" src="https://www.yidear-hotel.com/wp-content/uploads/2018/08/DSC_5850-1.jpg"></figure>`);
  const diningCard=document.querySelector('#view-dining .stack .card');
- if(diningCard && !diningCard.querySelector('.dining-photo')){
-  diningCard.insertAdjacentHTML('afterbegin',`<div class="dining-photo"><img loading="lazy" decoding="async" alt="YIDEAR HOTEL breakfast presentation" src="https://www.yidear-hotel.com/wp-content/uploads/2022/11/%E6%97%A9%E9%A4%901.jpg"></div>`);
- }
+ if(diningCard && !diningCard.querySelector('.dining-photo')) diningCard.insertAdjacentHTML('afterbegin',`<div class="dining-photo"><img loading="lazy" decoding="async" alt="YIDEAR HOTEL breakfast presentation" src="https://www.yidear-hotel.com/wp-content/uploads/2022/11/%E6%97%A9%E9%A4%901.jpg"></div>`);
 }
 
 function boot(){
@@ -177,12 +162,10 @@ function boot(){
  });
  document.getElementById('itemSearch').addEventListener('input',renderItems);
  document.getElementById('channelSearch').addEventListener('input',renderChannels);
-
  lang=detectLang(); applyLang();
  const initial=location.hash.slice(1)||'home';
  history.replaceState({view:initial},'',location.hash||'#home');
  go(initial,false);
-
  if (window.matchMedia('(hover:hover) and (pointer:fine)').matches){
   document.addEventListener('pointermove', e=>{
    const card=e.target.closest('.home-card,.menu-card');
