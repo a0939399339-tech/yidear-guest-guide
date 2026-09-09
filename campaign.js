@@ -1,9 +1,10 @@
 window.GIFT_CAMPAIGN = {
-  id: '2026-09-v5',
+  id: '2026-09-v6',
   enabled: true,
   autoOpen: true,
   autoOpenDelay: 1400,
-  image: 'assets/gift-2026-09.jpg?v=20260909-5',
+  imageBase64File: 'assets/gift-current-verified.b64.txt?v=20260909-6',
+  imageMime: 'image/jpeg',
   link: 'https://reurl.cc/kE7jLb',
   title: {
     zh: '本期五星小禮',
