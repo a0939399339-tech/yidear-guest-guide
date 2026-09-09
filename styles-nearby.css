@@ -1,0 +1,21 @@
+.nearby-food-section{margin-top:18px;padding:28px;border:1px solid var(--line);border-radius:28px;background:linear-gradient(145deg,rgba(255,255,255,.82),rgba(248,243,234,.72));box-shadow:var(--shadow2)}
+.nearby-food-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:18px}
+.nearby-food-head h2{margin:7px 0 6px;font-size:26px;letter-spacing:-.02em}
+.nearby-food-head p{margin:0;max-width:720px;color:var(--muted);line-height:1.7}
+.nearby-radius{flex:0 0 auto;padding:8px 11px;border:1px solid rgba(154,117,52,.28);border-radius:999px;color:#8a682c;font-size:12px;font-weight:700;letter-spacing:.14em;background:rgba(255,255,255,.6)}
+.food-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.food-card{position:relative;display:flex;min-height:188px;padding:22px;border:1px solid rgba(80,67,45,.12);border-radius:22px;background:rgba(255,255,255,.72);text-decoration:none;color:inherit;overflow:hidden;transition:transform .45s var(--ease-soft),box-shadow .45s var(--ease-soft),border-color .45s var(--ease-soft)}
+.food-card::after{content:"";position:absolute;inset:auto -55px -60px auto;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,rgba(181,139,65,.10),rgba(181,139,65,0) 68%);pointer-events:none}
+.food-card:hover{transform:translate3d(0,-3px,0);box-shadow:0 16px 34px rgba(56,45,29,.10);border-color:rgba(154,117,52,.28)}
+.food-no{flex:0 0 38px;color:#b08a48;font-size:12px;font-weight:800;letter-spacing:.16em;padding-top:3px}
+.food-card-body{display:flex;flex-direction:column;min-width:0}
+.food-meta{color:#8c744e;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+.food-card h3{margin:0 0 9px;font-size:19px;line-height:1.3}
+.food-card p{margin:0;color:var(--muted);font-size:14px;line-height:1.65}
+.food-nav{display:inline-flex;align-items:center;gap:7px;margin-top:auto;padding-top:16px;color:#8c6a2e;font-size:13px;font-weight:700}
+.food-nav svg{width:15px;height:15px;transition:transform .35s var(--ease-soft)}
+.food-card:hover .food-nav svg{transform:translate3d(3px,0,0)}
+.nearby-note{margin:16px 2px 0;color:var(--muted);font-size:12px;line-height:1.6}
+@media(max-width:980px){.food-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.nearby-food-section{padding:20px 16px;border-radius:22px}.nearby-food-head{display:block}.nearby-radius{display:inline-flex;margin-top:12px}.food-grid{grid-template-columns:1fr}.food-card{min-height:170px;padding:19px;border-radius:19px}.nearby-food-head h2{font-size:23px}}
+@media (prefers-reduced-motion: reduce){.food-card,.food-nav svg{transition:none!important}}
