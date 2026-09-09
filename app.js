@@ -1,6 +1,8 @@
 let lang='zh';
 let current='home';
 let giftTimer=null;
+let giftImageDataUrl=null;
+let giftImagePromise=null;
 
 function detectLang(){
  let saved=null;
@@ -75,11 +77,30 @@ function ensureGiftModal(){
  modal.setAttribute('role','dialog');
  modal.setAttribute('aria-modal','true');
  modal.setAttribute('aria-labelledby','giftModalTitle');
- modal.innerHTML=`<div class="gift-dialog"><button class="gift-close" type="button" aria-label="Close" onclick="closeGiftModal()">×</button><a class="gift-image-link" id="giftModalImageLink" target="_blank" rel="noopener"><img class="gift-image" id="giftModalImage" alt=""></a><div class="gift-copy"><h2 id="giftModalTitle"></h2><p id="giftModalNote"></p><a class="gift-cta" id="giftModalCta" target="_blank" rel="noopener"></a></div></div>`;
+ modal.innerHTML=`<div class="gift-dialog"><button class="gift-close" type="button" aria-label="Close" onclick="closeGiftModal()">×</button><a class="gift-image-link loading" id="giftModalImageLink" target="_blank" rel="noopener"><img class="gift-image" id="giftModalImage" alt=""></a><div class="gift-copy"><h2 id="giftModalTitle"></h2><p id="giftModalNote"></p><a class="gift-cta" id="giftModalCta" target="_blank" rel="noopener"></a></div></div>`;
  document.body.appendChild(modal);
  modal.addEventListener('click',e=>{if(e.target===modal) closeGiftModal();});
  document.addEventListener('keydown',e=>{if(e.key==='Escape') closeGiftModal();});
  syncGiftModal();
+}
+function loadGiftImage(){
+ const c=window.GIFT_CAMPAIGN||{};
+ if(c.imageBase64File){
+  if(giftImageDataUrl) return Promise.resolve(giftImageDataUrl);
+  if(!giftImagePromise){
+   giftImagePromise=fetch(c.imageBase64File,{cache:'no-store'})
+    .then(r=>{if(!r.ok) throw new Error('gift image payload'); return r.text();})
+    .then(txt=>{
+      const clean=txt.replace(/\s+/g,'');
+      if(!clean || clean.length<1000) throw new Error('invalid gift image payload');
+      giftImageDataUrl=`data:${c.imageMime||'image/jpeg'};base64,${clean}`;
+      return giftImageDataUrl;
+    })
+    .catch(err=>{giftImagePromise=null; throw err;});
+  }
+  return giftImagePromise;
+ }
+ return Promise.resolve(c.image||'');
 }
 function syncGiftModal(){
  const modal=document.getElementById('giftModal');
@@ -91,9 +112,30 @@ function syncGiftModal(){
  document.getElementById('giftModalTitle').textContent=campaignText('title');
  document.getElementById('giftModalNote').textContent=campaignText('note');
  cta.textContent=campaignText('cta');
- image.src=c.image||'';
  imageLink.href=c.link||'#';
  cta.href=c.link||'#';
+ image.removeAttribute('src');
+ image.classList.remove('loaded');
+ imageLink.classList.remove('loaded','failed');
+ imageLink.classList.add('loading');
+ loadGiftImage().then(src=>{
+   if(!src || !image.isConnected) throw new Error('missing gift image');
+   image.onload=()=>{
+     image.classList.add('loaded');
+     imageLink.classList.remove('loading','failed');
+     imageLink.classList.add('loaded');
+   };
+   image.onerror=()=>{
+     image.removeAttribute('src');
+     imageLink.classList.remove('loading','loaded');
+     imageLink.classList.add('failed');
+   };
+   image.src=src;
+ }).catch(()=>{
+   image.removeAttribute('src');
+   imageLink.classList.remove('loading','loaded');
+   imageLink.classList.add('failed');
+ });
 }
 function openGiftModal(markSeenNow=true){
  const c=window.GIFT_CAMPAIGN||{};
