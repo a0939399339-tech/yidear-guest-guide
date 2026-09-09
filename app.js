@@ -1,8 +1,6 @@
 let lang='zh';
 let current='home';
 let giftTimer=null;
-let giftImageDataUrl=null;
-let giftImagePromise=null;
 
 function detectLang(){
  let saved=null;
@@ -83,25 +81,6 @@ function ensureGiftModal(){
  document.addEventListener('keydown',e=>{if(e.key==='Escape') closeGiftModal();});
  syncGiftModal();
 }
-function loadGiftImage(){
- const c=window.GIFT_CAMPAIGN||{};
- if(c.imageBase64File){
-  if(giftImageDataUrl) return Promise.resolve(giftImageDataUrl);
-  if(!giftImagePromise){
-   giftImagePromise=fetch(c.imageBase64File,{cache:'no-store'})
-    .then(r=>{if(!r.ok) throw new Error('gift image payload'); return r.text();})
-    .then(txt=>{
-      const clean=txt.replace(/\s+/g,'');
-      if(!clean || clean.length<1000) throw new Error('invalid gift image payload');
-      giftImageDataUrl=`data:${c.imageMime||'image/jpeg'};base64,${clean}`;
-      return giftImageDataUrl;
-    })
-    .catch(err=>{giftImagePromise=null; throw err;});
-  }
-  return giftImagePromise;
- }
- return Promise.resolve(c.image||'');
-}
 function syncGiftModal(){
  const modal=document.getElementById('giftModal');
  const c=window.GIFT_CAMPAIGN||{};
@@ -112,30 +91,31 @@ function syncGiftModal(){
  document.getElementById('giftModalTitle').textContent=campaignText('title');
  document.getElementById('giftModalNote').textContent=campaignText('note');
  cta.textContent=campaignText('cta');
+ image.alt=campaignText('title');
  imageLink.href=c.link||'#';
  cta.href=c.link||'#';
- image.removeAttribute('src');
  image.classList.remove('loaded');
  imageLink.classList.remove('loaded','failed');
  imageLink.classList.add('loading');
- loadGiftImage().then(src=>{
-   if(!src || !image.isConnected) throw new Error('missing gift image');
-   image.onload=()=>{
-     image.classList.add('loaded');
-     imageLink.classList.remove('loading','failed');
-     imageLink.classList.add('loaded');
-   };
-   image.onerror=()=>{
-     image.removeAttribute('src');
-     imageLink.classList.remove('loading','loaded');
-     imageLink.classList.add('failed');
-   };
-   image.src=src;
- }).catch(()=>{
+ image.onload=()=>{
+   image.classList.add('loaded');
+   imageLink.classList.remove('loading','failed');
+   imageLink.classList.add('loaded');
+ };
+ image.onerror=()=>{
    image.removeAttribute('src');
    imageLink.classList.remove('loading','loaded');
    imageLink.classList.add('failed');
- });
+ };
+ const src=c.image||'';
+ if(!src){
+   image.removeAttribute('src');
+   imageLink.classList.remove('loading','loaded');
+   imageLink.classList.add('failed');
+   return;
+ }
+ image.src=src;
+ if(image.complete && image.naturalWidth>0) image.onload();
 }
 function openGiftModal(markSeenNow=true){
  const c=window.GIFT_CAMPAIGN||{};
